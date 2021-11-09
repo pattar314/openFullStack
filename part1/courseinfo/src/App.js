@@ -4,7 +4,7 @@ const App = () => {
   const course = 'Half Stack application development';
  
  
-  const part1 = {
+/*   const part1 = {
     name: 'Fundementals of React',
     exercises: 10
   }
@@ -17,15 +17,31 @@ const App = () => {
   const part3 = {
     name: 'State of a component',
     exercises: 14
-  }
+  } */
 
 
+  const parts = [
+    {
+      name: 'Fundementals of React',
+      exercises: 10
+    },
+    {
+      name: 'State of a component',
+      exercises: 14
+    },
+    {
+      name: 'State of a component',
+      exercises: 14
+    },
+    
+  ]
 
 
   return (
-    <div>
-  
-    </div>
+    <>
+      {course}
+      {parts.map(part => <div>{part['name']}  {part['exercises']} </div>) }
+    </>   
   )
 }
 
