@@ -26,8 +26,10 @@ const App = () => {
 
   
   return(
+    <>
     <Course course={course} />
-
+    <div className='exercise-total'>Total of {course.parts.reduce((previous, current) =>  previous + current.exercises, 0)} exercises</div> 
+    </>
   )
 }
 export default App
