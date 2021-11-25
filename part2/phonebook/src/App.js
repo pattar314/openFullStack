@@ -1,19 +1,23 @@
 import React, {useState, useEffect} from 'react';
-import axios from 'axios'
 import './App.css';
 import AddForm from './components/AddForm';
 import Entries from './components/Entries';
 import SearchArea from './components/SearchArea';
+import phonebookServices from './services/phonebook.services.js';
 
 function App() {
   
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const [searchFound, setSearchFound] = useState('')
+  const [book, setBook] = useState(false)
 
 useEffect(() => {
-  axios.get('http://localhost:3001/persons').then(response => setPersons(response.data))
+  phonebookServices.retrieveAll()
+  .then(initalPersons => {
+    setPersons(initalPersons);
+    console.log(initalPersons)
+  })
 }, [])
 
 
@@ -28,22 +32,43 @@ useEffect(() => {
   const handleSearchInput = (event) => {
     let upperSearch = event.target.value.toUpperCase();
     let found = persons.filter((person) => (person.name.toUpperCase().indexOf(upperSearch) !== -1 ));
-    setSearchFound(found);
+    (upperSearch === '' ? setBook(false) : setBook(found))
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
     let newPerson = {
       name: newName,
       number: newNumber
     };
-    if(persons.some((person) => person.name === newName)){
-      alert(`${newName} already added`)
-    }else{ setPersons(persons.concat(newPerson))};
+
+    let found = persons.find((person) => person.name === newName)
+  
+    if(found){
+      (window.confirm(`The entry for ${newName} already exists would you like to update the number?`)
+      ? phonebookServices.updateEntry(found.id, newPerson).then(updatedPerson => {
+        let clone = persons.map(person => person.name === newName ? {...person, number: newNumber} : person)
+        console.log('updated clone: ', clone)
+        setPersons(clone)
+      }).catch(err => console.log('there was an error: ', err))
+      : window.alert('Number not updated') )
+    } else {
+      phonebookServices.createEntry(newPerson)
+      .then(updatedPerson => {
+        setPersons(persons.concat(updatedPerson))
+        console.log('updated persons', persons)
+      })
+      .catch(error => console.log(error))
+    }
     setNewName('')
     setNewNumber('')
-    setSearchFound(searchFound);
   }
+
+  const deleteEntry = (id) => {
+    phonebookServices.deleteEntry(id);
+    setPersons(persons.filter(person => person.id !== id))
+    }
   
   return (
     <div className="App">
@@ -58,7 +83,7 @@ useEffect(() => {
       newNumber={newNumber}
       />    
       <h2>Entries</h2>
-        <Entries entries={persons} found={searchFound} />
+        <Entries book={ book ? book : persons } deleteEntry={deleteEntry} />
     </div>
   );
 }

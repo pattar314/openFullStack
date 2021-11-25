@@ -1,11 +1,11 @@
 import React from 'react'
 
-const Entries = ({entries, found}) => {
+const Entries = ({book, deleteEntry}) => {
    
-    let book = (found ? found.map(person => <div key={person.name}>{person.name}: {person.number}</div>) : entries.map(person => <div key={person.name}>{person.name}: {person.number}</div>))
+    console.log('book: ', book)
     return (
         <div>
-            {book}
+            {book.map(entry => <div key={entry.id}>{entry.name}: {entry.number} <button onClick={() => (window.confirm('Are you sure you would like to delete this entry?') ? deleteEntry(entry.id) : null)} >Delete</button> </div>)}
         </div>
     )
 }
