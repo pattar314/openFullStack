@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import './App.css';
 import AddForm from './components/AddForm';
 import Entries from './components/Entries';
+import Notification from './components/Notification';
 import SearchArea from './components/SearchArea';
 import phonebookServices from './services/phonebook.services.js';
 
@@ -11,6 +12,7 @@ function App() {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [book, setBook] = useState(false)
+  const [message, setMessage] = useState(null)
 
 useEffect(() => {
   phonebookServices.retrieveAll()
@@ -51,18 +53,30 @@ useEffect(() => {
         let clone = persons.map(person => person.name === newName ? {...person, number: newNumber} : person)
         console.log('updated clone: ', clone)
         setPersons(clone)
-      }).catch(err => console.log('there was an error: ', err))
-      : window.alert('Number not updated') )
+        handleMessage('Entry updated', "success")
+      }).catch((err) => {
+        console.log("There was an error: ", err.message)
+        setMessage("This entry is no longer on the server", "failure")
+      })
+      : window.alert('Number not updated') );
     } else {
       phonebookServices.createEntry(newPerson)
       .then(updatedPerson => {
         setPersons(persons.concat(updatedPerson))
         console.log('updated persons', persons)
+        handleMessage('Entry created', "success")
       })
       .catch(error => console.log(error))
     }
     setNewName('')
     setNewNumber('')
+  }
+
+  const handleMessage = (messageBody) => {
+    setMessage(messageBody);
+    setTimeout(()=> {
+      setMessage(null);
+    }, 2000)
   }
 
   const deleteEntry = (id) => {
@@ -73,6 +87,7 @@ useEffect(() => {
   return (
     <div className="App">
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <SearchArea handleSearchInput={handleSearchInput} />
       <h2>Add new</h2>
       <AddForm 
