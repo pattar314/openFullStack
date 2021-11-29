@@ -1,33 +1,51 @@
 const { response } = require('express')
 const express = require('express')
+const morgan = require("morgan")
 
 const app = express()
 const PORT = 3001
 
+const tempPhonebook =  [
+  { 
+    "id": 1,
+    "name": "Arto Hellas", 
+    "number": "040-123456"
+  },
+  { 
+    "id": 2,
+    "name": "Ada Lovelace", 
+    "number": "39-44-5323523"
+  },
+  { 
+    "id": 3,
+    "name": "Dan Abramov", 
+    "number": "12-43-234345"
+  },
+  { 
+    "id": 4,
+    "name": "Mary Poppendieck", 
+    "number": "39-23-6423122"
+  }
+  ]
+
 app.use(express.json())
 
-let tempPhonebook = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+morgan.token('body', function (req) {
+    return JSON.stringify(req.body) 
+})
+
+app.use(morgan((tokens, req, res) => {
+    console.log(tokens.req)
+    return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'), '-', tokens['response-time'](req, res), 'ms',
+        tokens.body(req, res)
+    ].join(' ')
+}))
+
+
 
 app.get(`/api/info`, (request, response) => {
     response.status(200).send(`<div>Phonebook has info for ${tempPhonebook.length} people</div>
@@ -87,6 +105,10 @@ app.delete('/api/persons/:id', (request, response) => {
      } 
 })
 
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({error: 'unknown endpoint'})
+}
+app.use(unknownEndpoint)
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`)
