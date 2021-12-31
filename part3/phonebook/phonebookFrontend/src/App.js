@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import './App.css';
-import AddForm from './components/AddForm';
-import Entries from './components/Entries';
-import Notification from './components/Notification';
-import SearchArea from './components/SearchArea';
-import phonebookServices from './services/phonebook.services.js';
+import React, {useState, useEffect} from 'react'
+import './App.css'
+import AddForm from './components/AddForm'
+import Entries from './components/Entries'
+import Notification from './components/Notification'
+import SearchArea from './components/SearchArea'
+import phonebookServices from './services/phonebook.services.js'
 
 function App() {
   
@@ -15,38 +15,38 @@ function App() {
   const [message, setMessage] = useState(null)
   const [status, setStatus] = useState(null)
 
-useEffect(() => {
-  phonebookServices.readAll()
-  .then(initalPersons => {
-    setPersons(initalPersons);
-    console.log(initalPersons)
-  })
-}, [])
+  useEffect(() => {
+    phonebookServices.readAll()
+    .then(initalPersons => {
+      setPersons(initalPersons)
+      console.log('initial persons: ', initalPersons)
+      })
+  }, [])
 
 
   const handleNameInput = (event) => {
     console.log(newName)
-    setNewName(event.target.value);
+    setNewName(event.target.value)
   }
 
   const handlePhoneInput = (event) => {
     console.log(newNumber)
-    setNewNumber(event.target.value);
+    setNewNumber(event.target.value)
   }
 
   const handleSearchInput = (event) => {
-    let upperSearch = event.target.value.toUpperCase();
-    let found = persons.filter((person) => (person.name.toUpperCase().indexOf(upperSearch) !== -1 ));
+    let upperSearch = event.target.value.toUpperCase()
+    let found = persons.filter((person) => (person.name.toUpperCase().indexOf(upperSearch) !== -1 ))
     (upperSearch === '' ? setBook(false) : setBook(found))
   }
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     let newPerson = {
       name: newName,
       number: newNumber
-    };
+    }
 
     let found = persons.find((person) => person.name === newName)
   
@@ -61,32 +61,36 @@ useEffect(() => {
         console.log("There was an error: ", err.message)
         setMessage("This entry is no longer on the server", "failure")
       })
-      : window.alert('Number not updated') );
+      : window.alert('Number not updated') )
     } else {
       phonebookServices.createEntry(newPerson)
-      .then(updatedPerson => {
-        setPersons(persons.concat(updatedPerson))
-        console.log('updated persons', persons)
+      .then(data => {
+        console.log('new person: ', newPerson)
+        setPersons(persons.concat(newPerson))
+        console.log('Added entry', data)
         handleMessage('Entry created', "success")
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        console.log('error data', error.response.data.error)
+        handleMessage(error.response.data.error, 'failure')
+      })
     }
     setNewName('')
     setNewNumber('')
   }
 
   const handleMessage = (messageBody, status) => {
-    setMessage(messageBody);
+    setMessage(messageBody)
     setStatus(status)
     setTimeout(()=> {
-      setMessage(null);
+      setMessage(null)
       setStatus(null)
     }, 2000)
   }
 
   const deleteEntry = (id) => {
-    phonebookServices.deleteEntry(id);
-    setMessage('Entry deleted', 'failure')
+    phonebookServices.deleteEntry(id)
+    handleMessage('Entry deleted', 'failure')
     setPersons(persons.filter(person => person.id !== id))
     }
   
@@ -106,7 +110,7 @@ useEffect(() => {
       <h2>Entries</h2>
         <Entries book={ book ? book : persons } deleteEntry={deleteEntry} />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

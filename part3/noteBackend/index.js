@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
-const cors = require('cors');
-const mongoose = require('mongoose');
+const cors = require('cors')
 require('dotenv').config();
 const Note = require('./models/note');
 const note = require('./models/note');
@@ -36,6 +35,7 @@ const { response } = require('express');
   }
   )
 
+
   app.delete('/api/notes/:id', (request, response) => {
     const id = request.params.id;
     Note.findByIdAndRemove(id).then(result => {
@@ -44,9 +44,9 @@ const { response } = require('express');
     }).catch(error => next(error))
   })
 
+
   app.post('/api/notes', (request, response) => {
       const body = request.body;
-
         if(!body.content){
             return response.status(400).json({
                 error: 'content missing'
@@ -58,10 +58,14 @@ const { response } = require('express');
           date: new Date(),
         })
 
-      note.save().then(savedNote => {
-        response.json(savedNote)
-      }).catch(err => console.log(`there was an error: ${err.message}`))
+      note.save()
+      .then(savedNote => savedNote.toJSON())
+      .then(savedAndFormattedNote => {
+        response.json(savedAndFormattedNote)
+      })
+      .catch(error => next(error))
     })
+
 
     app.put('/api/notes/:id', (request, response, next) => {
       const body = request.body;
@@ -80,19 +84,18 @@ const { response } = require('express');
     const unknownEndpoint = (request, response) => {
       response.status(404).send({error: 'unknown endpoint'})
     }
-
     app.use(unknownEndpoint)
-
-
+    
+    
     const errorHandler = (error, request, response, next) => {
       console.log(error.message);
-
       if (error.name === 'CastError'){
         return response.status(404).send({error: 'malformatted id'})
+      } else if (error.name === 'ValidationError'){
+          return response.status(400).json({ error: error.message })
       }
       next(error)
     }
-
     app.use(errorHandler)
 
 

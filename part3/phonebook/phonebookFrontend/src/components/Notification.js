@@ -23,6 +23,7 @@ const Notification = ({message, status}) => {
         
     };
 
+
     return (
         <div className='notification-wrapper' style={styles.wrapperStyles}>
             <div className='notification-body' style={status === "success" ? styles.successStyles : styles.failureStyles}>{message}</div></div>
