@@ -2,10 +2,10 @@ const express = require('express')
 const process = require('process')
 const morgan = require('morgan')
 const cors = require('cors')
+require('dotenv').config()
 const app = express()
 const PORT = process.env.PORT || 3001
 const PhoneEntry = require('./models/entry')
-require('dotenv')
 
 app.use(cors())
 app.use(express.static('build'))
