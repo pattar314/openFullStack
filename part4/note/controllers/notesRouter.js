@@ -1,12 +1,19 @@
 const notesRouter = require('express').Router()
+const process = require('process')
+const jwt = require('jsonwebtoken')
 const Note = require('../models/Note')
 const User = require('../models/User')
 
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')){
+    return authorization.substring(7)
+  }
+}
+
 
 notesRouter.get('/', async ( req, res ) => {
-  console.log('notes test 1')
   let notes = await Note.find({}).populate('user', { username: 1, name: 1 })
-  console.log('notes test 2: ', notes)
   if(notes) {
     res.status(200).json(notes)
   } else {
@@ -16,8 +23,7 @@ notesRouter.get('/', async ( req, res ) => {
 
 
 notesRouter.get('/:id', async ( req, res ) => {
-  let note = await Note.findById( req.params.id )
-  console.log('notes test 3: ', note)
+  const note = await Note.findById( req.params.id )
   if(note) {
     res.json(note)
   } else {
@@ -28,25 +34,44 @@ notesRouter.get('/:id', async ( req, res ) => {
 
 notesRouter.post('/', async (req, res) => {
   const body = req.body
+  const token = getTokenFrom(req)
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!decodedToken.id){
+    return res.status(401).json({ error: 'token missing or invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
 
-  const user = await User.findById(body.userId)
+  if(!req.body.content){
+    res.status(400).json({ error: 'content is missing' })
+  }else if( !req.body.userId ){
+    res.status(400).json({ error: 'user required' })
+  }
+
+  console.log('note body: ', req.body)
+  console.log('user is: ', user)
 
   const note = new Note({
     content: body.content,
-    important: body.important === undefined ? false : body.important,
+    important: body.important || false,
     date: new Date(),
-    user: user._id
+    user: user.id
   })
 
+  console.log('note is: ', note)
   let savedNote = await note.save()
+  console.log('saved note is: ', savedNote)
+
   user.notes = user.notes.concat(savedNote._id)
-  await note.save()
+  const savedUser = await user.save()
+  console.log('saved user: ', savedUser)
+
   res.json(savedNote)
 })
 
 
 notesRouter.put('/:id', async (req, res) => {
   const body = req.body
+
 
   const note = {
     content: body.content,
@@ -59,7 +84,7 @@ notesRouter.put('/:id', async (req, res) => {
 })
 
 notesRouter.delete('/:id', async (req, res) => {
-  await Note.findByIdAndDelete(req.params.id)
+  await Note.findByIdAndRemove(req.params.id)
   res.status(204).end()
 })
 

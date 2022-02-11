@@ -51,37 +51,58 @@ describe('viewing a specific note', () => {
   })
 
   test('fails with a statuscode 404 if note does not exist', async () => {
+    const validNonExistingId = await helper.nonExistingId()
+
+    console.log(validNonExistingId)
+
+    await api
+      .get(`/api/notes/${ validNonExistingId }`)
+      .expect(404)
+
+  })
+
+  test('fails with status code 400 if id is invalid', async () => {
     const invalidId = '5a3d5da59070081a82a3445'
 
     await api
-      .get(`/api/notes/${invalidId}`)
-      .expect(404)
+      .get(`/api/notes/${ invalidId }`)
+      .expect(400)
   })
 })
 
 describe('addition of a new note', () => {
   test('succeeds with valid data', async () => {
+    console.log('this one is suppose to succeed')
     const newNote = {
       content: 'async/await simplifies making async calls',
       important: true,
+      userId: '61fc806059032abe9e142391'
     }
 
-    await api
-      .post('/api/notes')
-      .send(newNote)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
+    try{
+      await api
+        .post('/api/notes')
+        .send(newNote)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
 
-    const notesAtEnd = await helper.notesInDb()
-    expect(notesAtEnd).toHaveLength(helper.initialNotes.length + 1)
+      console.log('note saved')
 
-    const contents = notesAtEnd.map(n => n.content)
-    expect(contents).toContain(
-      'async/await simplifies making async calls'
-    )
+      const notesAtEnd = await helper.notesInDb()
+      expect(notesAtEnd).toHaveLength(helper.initialNotes.length + 1)
+      console.log('note added')
+      const contents = notesAtEnd.map(n => n.content)
+      expect(contents).toContain(
+        'async/await simplifies making async calls'
+      )
+      console.log('note contained')
+    } catch(error){
+      console.log('there was an error:', error.message)
+    }
   })
 
-  test('fails with status code 400 if data invalid', async () => {
+  test('note without content is not added', async () => {
+    console.log('this one is supposed to fail')
     const newNote = {
       important: true
     }
@@ -91,9 +112,9 @@ describe('addition of a new note', () => {
       .send(newNote)
       .expect(400)
 
-    const notesAtEnd = await helper.notesInDb()
+    const notesAtEnd = await api.get('/api/notes')
 
-    expect(notesAtEnd).toHaveLength(helper.initialNotes.length)
+    expect(notesAtEnd.body).toHaveLength(helper.initialNotes.length)
   })
 })
 
