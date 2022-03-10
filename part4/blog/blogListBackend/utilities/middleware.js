@@ -1,5 +1,8 @@
+const jwt = require('jsonwebtoken')
+const process = require('process')
+require('dotenv').config()
 
-const middleware = (req, res, next) => {
+const routeLogger = (req, res, next) => {
   console.log(req.url)
   console.log(req.body)
   console.log(req.status)
@@ -7,4 +10,31 @@ const middleware = (req, res, next) => {
   next()
 }
 
-module.exports = middleware
+const extractToken = (req, res, next) => {
+  const authorization = req.get('Authorization')
+  if(authorization && authorization.toLowerCase().startsWith('bearer')){
+    console.log('authorization passed')
+    req.token = authorization.substring(7)
+  } else {
+    console.log('no token provided')
+  }
+  next()
+}
+
+const extractUser = ( req, res, next) => {
+  try{
+    const token = req.get('Authorization').substring(7)
+    if (!token){
+      res.status(401).json({ error: 'User required' })
+    }
+
+    let decodedToken = jwt.verify(token, process.env.SECRET)
+    req.user = decodedToken.id
+  } catch (err) {
+    console.log('authorization failed')
+    res.status(401).json({ error: 'no authorization' })
+  }
+  next()
+}
+
+module.exports = { routeLogger, extractToken, extractUser }
