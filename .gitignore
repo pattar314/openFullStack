@@ -1,2 +1,4 @@
 /part4/note/.git
 */.git
+*/node_modules
+*/.env
