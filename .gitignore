@@ -1,4 +1,3 @@
-/part4/note/.git
-*/.git
+/part*/*/.git
 */node_modules
 */.env
