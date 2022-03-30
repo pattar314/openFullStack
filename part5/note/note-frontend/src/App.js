@@ -116,14 +116,14 @@ const App = (props) => {
     <div>
       <h1>Notes</h1>  
 
-
-      { user === null 
-      ? loginForm() 
-      : <Togglable buttonLabel='new note'>
-          <NoteForm
-            addNote={addNote}
-          />
-        </Togglable>
+      { 
+        user === null 
+        ? loginForm() 
+        : <Togglable buttonLabel='new note'>
+            <NoteForm
+              addNote={addNote}
+            />
+          </Togglable>
       }
 
       <div>
