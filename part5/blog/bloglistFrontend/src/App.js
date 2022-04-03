@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Main from './components/Main'
 import { login } from './services/auth'
 import Notification from './components/Notification'
-
+import './styles/temp.css'
 
 
 const App = () => {
@@ -79,7 +79,7 @@ const App = () => {
     </>
   )
 
-  
+
 
   return (
     <div className='main-content'>

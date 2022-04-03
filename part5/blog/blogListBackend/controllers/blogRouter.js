@@ -91,12 +91,16 @@ blogRouter.get('/:id', async ( req, res ) => {
   res.json(result)
 })
 
+blogRouter.put('/', extractUser, async (req, res) => {
+  let updatedDB = await Blog.updateMany(req.body)
+  updatedDB.status === 200 ? console.log('db updated') : console.log(`there was an error ${updatedDB.status}`)
+  res.json({ updatedDB: updatedDB, status: updatedDB.status })
+})
+
 // Update
 blogRouter.put('/:id', extractUser, async (req, res) => {
   let body = req.body
-
   let result = await Blog.findByIdAndUpdate(req.params.id, body, { new: true })
-
   res.json(result)
 })
 

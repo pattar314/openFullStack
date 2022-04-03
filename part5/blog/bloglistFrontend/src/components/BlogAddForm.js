@@ -18,7 +18,7 @@ const BlogAddForm = ({newNotification, blogChange}) => {
   const handleUrlChange = (event) => {
     setUrl(event.target.value)
   }
-
+ 
   const handleSubmit = async (form) => {
     form.preventDefault()
     const  toSend = {

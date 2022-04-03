@@ -6,7 +6,6 @@ import React from "react"
     handlePasswordChange,
     username,
     password,
-    loginVisible
   }) => {
 
     return (
@@ -16,7 +15,7 @@ import React from "react"
             <input type='text'
             value={ username }
             name='Username' 
-            onChange={({ target }) => handleUsernameChange(target.value)} 
+            onChange={handleUsernameChange} 
           />
           </div>
           <div>
@@ -24,7 +23,7 @@ import React from "react"
             <input type='text'
             value={ password }
             name='Password'
-            onChange={ ({ target }) => handlePasswordChange(target.value) } 
+            onChange={handlePasswordChange} 
             />
           </div>
           <button type='submit'>login</button>
