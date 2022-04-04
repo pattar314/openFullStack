@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { login } from './../services/auth'
 
-const Login = ({ setUser }) => {
+const Login = () => {
 
   const [username, setUsername] = useState(null)
   const [password, setPassword] = useState(null)

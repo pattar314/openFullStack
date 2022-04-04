@@ -6,16 +6,16 @@ import Toggleable from './Toggleable'
 import axios from 'axios'
 
 const Main = ({ username, logout, newNotification }) => {
-  
+
   const [blogs, setBlogs] = useState([])
 
 
-  useEffect( () => { 
+  useEffect( () => {
     blogService.getAll().then(retrievedBlogs => {
       const sortedBlogs = blogService.sortBlogs(retrievedBlogs)
       setBlogs( sortedBlogs )
     }
-    )  
+    )
   }, [])
 
 
@@ -25,22 +25,22 @@ const Main = ({ username, logout, newNotification }) => {
   }
 
   const deleteBlog = async (blogId) => {
-    // TODO fix authorization issues probably build request 
+    // TODO fix authorization issues probably build request
     const localUser = window.localStorage.getItem('blogUser')
     const converted = JSON.parse(localUser)
     const authorization = `Bearer ${converted.token}`
-    
+
     const options = {
-      headers: { Authorization: authorization}
+      headers: { Authorization: authorization }
     }
-    
+
     const deletedBlog = await axios.delete(`/api/blogs/${blogId}`, options)
     console.log('deletedBlog', deletedBlog)
-    
+
     let newList = blogs.filter((blog) => blog.id !== blogId)
     setBlogs(newList)
-}
-  
+  }
+
 
   const addLike = async (blog) => {
     const body = {
@@ -55,19 +55,18 @@ const Main = ({ username, logout, newNotification }) => {
       const localUser = window.localStorage.getItem('blogUser')
       const converted = JSON.parse(localUser)
       const authorization = `Bearer ${converted.token}`
-      
-    
+
       const options = {
-        headers: { Authorization: authorization}
+        headers: { Authorization: authorization }
       }
-    
+
       let updatedNote = await axios.put(`/api/blogs/${blog.id}`, body, options)
       console.log('updated note: ', updatedNote)
       if (updatedNote.status === 200 || updatedNote.status === 201){
         console.log('blog updated')
         blogService.getAll().then(blogs =>
           setBlogs( blogs )
-        ) 
+        )
       }else {
         console.log('there was an error in else')
       }
@@ -75,8 +74,8 @@ const Main = ({ username, logout, newNotification }) => {
       console.log('there was an error: ', error)
     }
   }
-  
-/*   
+
+  /*
     const newBlogList = blogs.filter((blog) => blog.id !== blogId)
     blogService.deleteBlog(newBlogList)
     setBlogs(newBlogList)
@@ -84,7 +83,6 @@ const Main = ({ username, logout, newNotification }) => {
  */
   return (
     <>
-    
       <h2>blogs</h2>
       <p>{ username } is logged in <button onClick={logout}>Logout</button></p>
       <Toggleable buttonLabel='new note'>
@@ -93,11 +91,11 @@ const Main = ({ username, logout, newNotification }) => {
       { blogs.map(blog =>
         <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} addLike={addLike} />
       ) }
-    
+
 
     </>
-    
-    
+
+
   )
 }
 
