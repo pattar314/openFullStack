@@ -10,11 +10,12 @@ const Main = ({ username, logout, newNotification }) => {
   const [blogs, setBlogs] = useState([])
 
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+  useEffect( () => { 
+    blogService.getAll().then(retrievedBlogs => {
+      const sortedBlogs = blogService.sortBlogs(retrievedBlogs)
+      setBlogs( sortedBlogs )
+    }
     )  
-
   }, [])
 
 
@@ -42,8 +43,8 @@ const Main = ({ username, logout, newNotification }) => {
   
 
   const addLike = async (blog) => {
-    // TODO set function to update likes, the update function should already be in the router I think
     const body = {
+      user: blog.user,
       title: blog.title,
       author: blog.author,
       url: blog.url,
