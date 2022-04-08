@@ -1,15 +1,14 @@
-import React, { useState } from "react"
-import axios from "axios"
+import React, { useState } from 'react'
 
 
-const Blog = ({blog, deleteBlog, addLike}) => {
-  
+const Blog = ({ blog, deleteBlog, addLike }) => {
+
   const [expanded, setExpanded] = useState(false)
 
-  const showBlog = { display: (expanded ? '' : 'none')}
+  const showBlog = { display: (expanded ? '' : 'none') }
   const expandedStyles = ( expanded ? 'expandedTop' : ''  )
 
-/*   const addLike = (blogId) => {
+  /*   const addLike = (blogId) => {
     // TODO set function to update likes, the update function should already be in the router I think
     const body = {
       title: blog.title,
@@ -41,23 +40,20 @@ const Blog = ({blog, deleteBlog, addLike}) => {
   )
 
 
-return(
+  return(
     <>
-    <div>
-    <div className={expandedStyles}>
-      {blog.title} - {blog.author} <button onClick={() => setExpanded(!expanded)}>{expanded ? 'hide' : 'show'}</button>
-    </div>  
-    <div className="expandedBottom" style={showBlog}>
-      <div className="url"><b>URL: </b>{blog.url}</div>
-      <div className="likes"><b>Likes: </b>{blog.likes}  <button onClick={() => addLike(blog)}>Like</button></div>
-      { storedUsername === blog.user[0].username ? deleteButton() : '' }
-    </div>
-  </div>
-  
-  </>
-)
-
-  
+      <div>
+        <div className={expandedStyles}>
+          {blog.title} - {blog.author} <button onClick={() => setExpanded(!expanded)}>{expanded ? 'hide' : 'show'}</button>
+        </div>
+        <div className="expandedBottom" style={showBlog}>
+          <div className="url"><b>URL: </b>{blog.url}</div>
+          <div className="likes"><b>Likes: </b>{blog.likes}  <button onClick={() => addLike(blog)}>Like</button></div>
+          { storedUsername === blog.user[0].username ? deleteButton() : '' }
+        </div>
+      </div>
+    </>
+  )
 }
 
 export default Blog

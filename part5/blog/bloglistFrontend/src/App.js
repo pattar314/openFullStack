@@ -6,16 +6,13 @@ import './styles/temp.css'
 
 
 const App = () => {
-  //TODO set up useEffect so that if a user is in local storage it is loaded up and the correct component is loaded
-  //TODO set something so that when a user is logged in the page changes component without needing reloaded
-  //TODO set it up so that going to the logout route logs out the user
 
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState(null)
   const [password, setPassword] = useState(null)
   const [message, setMessage] = useState()
-  
-  
+
+
   useEffect(() => {
     let storedUser = window.localStorage.getItem('blogUser')
     if (storedUser){
@@ -27,7 +24,7 @@ const App = () => {
   }, [])
 
 
-  
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -42,7 +39,7 @@ const App = () => {
       setUsername(null)
       setPassword(null)
     } else {
-      newNotification({content: 'Login failed', status: 'failed'})
+      newNotification({ content: 'Login failed', status: 'failed' })
     }
   }
 
@@ -54,7 +51,7 @@ const App = () => {
 
   const newNotification = (message) => {
     console.log('app message: ', message)
-    setMessage({content: message.content, status: message.status})
+    setMessage({ content: message.content, status: message.status })
     setTimeout(() => {
       setMessage(null)
     }, 3000)
@@ -89,4 +86,4 @@ const App = () => {
   )
 }
 
-export default App 
+export default App
