@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Notification = ({content, status}) => {
+const Notification = ({ content, status }) => {
   const styles = {
     wrapper: {
       'width': '75vw',

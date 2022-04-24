@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from 'axios'
 
 
 const login = async (user) => {
@@ -8,7 +8,7 @@ const login = async (user) => {
     window.localStorage.setItem('blogUser', JSON.stringify( request.data ))
     return request.data
   }
-  
+
 }
 
 

@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 
 
-const Blog = ({ blog, deleteBlog, addLike }) => {
+const Blog = ({ blog, deleteBlog, addLike, storedUser }) => {
 
   const [expanded, setExpanded] = useState(false)
 
   const showBlog = { display: (expanded ? '' : 'none') }
-  const expandedStyles = ( expanded ? 'expandedTop' : ''  )
+  const expandedStyles = ( expanded ? 'expandedTop' : 'block'  )
 
   /*   const addLike = (blogId) => {
     // TODO set function to update likes, the update function should already be in the router I think
@@ -30,10 +30,7 @@ const Blog = ({ blog, deleteBlog, addLike }) => {
     }
   } */
 
-  console.log('blog: ', blog)
 
-  const storedUser = JSON.parse(window.localStorage.getItem('blogUser'))
-  const storedUsername = storedUser.username
 
   const deleteButton = () => (
     <button onClick={() => deleteBlog(blog.id)}>delete</button>
@@ -43,13 +40,14 @@ const Blog = ({ blog, deleteBlog, addLike }) => {
   return(
     <>
       <div>
+        {console.log('blog: ', blog,  `blog user: ${JSON.stringify(blog.user)}`)}
         <div className={expandedStyles}>
           {blog.title} - {blog.author} <button onClick={() => setExpanded(!expanded)}>{expanded ? 'hide' : 'show'}</button>
         </div>
         <div className="expandedBottom" style={showBlog}>
           <div className="url"><b>URL: </b>{blog.url}</div>
           <div className="likes"><b>Likes: </b>{blog.likes}  <button onClick={() => addLike(blog)}>Like</button></div>
-          { storedUsername === blog.user[0].username ? deleteButton() : '' }
+          { storedUser === blog.user[0].username ? deleteButton() : '' }
         </div>
       </div>
     </>

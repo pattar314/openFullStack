@@ -76,6 +76,8 @@ blogRouter.get('/', async (req, res) => {
   let blogs = await Blog.find({})
     .populate('user', { username: 1, name: 1, id: 1 })
 
+  console.log('result: ', blogs)
+
   if (!blogs){
     res.status(401).error({ error: 'no blogs found' })
   } else {
@@ -88,6 +90,7 @@ blogRouter.get('/:id', async ( req, res ) => {
   let id = req.params.id
   let result = await Blog.findById(id)
     .populate('user', { username: 1, name: 1, id: 1 })
+  console.log('result: ', result)
   res.json(result)
 })
 

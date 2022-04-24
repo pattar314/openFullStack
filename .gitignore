@@ -1,3 +1,4 @@
 /part*/*/.git
 */node_modules
 */.env
+cypress/videos/

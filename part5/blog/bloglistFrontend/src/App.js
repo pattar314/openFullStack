@@ -16,10 +16,10 @@ const App = () => {
   useEffect(() => {
     let storedUser = window.localStorage.getItem('blogUser')
     if (storedUser){
-      storedUser = JSON.parse(storedUser)
-      console.log('stored user: ', storedUser)
-      setUser(storedUser)
-      setUsername(storedUser.username)
+      console.log('there is a stored user: ', storedUser)
+      const processedUser = JSON.parse(storedUser)
+      setUser(processedUser)
+      setUsername(processedUser.username)
     }
   }, [])
 

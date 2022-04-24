@@ -1,8 +1,7 @@
-import axios from 'axios'
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const BlogAddForm = ({ newNotification, blogChange }) => {
+const BlogAddForm = ({  blogChange }) => {
 
   const [author, setAuthor] = useState(null)
   const [title, setTitle] = useState(null)
@@ -27,32 +26,17 @@ const BlogAddForm = ({ newNotification, blogChange }) => {
       author,
       url
     }
-
-    let user = await JSON.parse(window.localStorage.getItem('blogUser'))
-    let token = `Bearer ${user.token}`
-    console.log(`blog add token is ${token}`)
-    let response = await axios.post('/api/blogs', toSend, { headers: { 'Authorization': token } })
-    if(response.status === 201){
-      console.log('add form response: ', response)
-      const toSend = {
-        content: `Blog ${title} added successfully`,
-        status: 'success'
-      }
-      newNotification(toSend)
-      blogChange(response.data)
-    } else {
-      newNotification({ content: 'blog creation failed', status: 'failed' })
-    }
+    blogChange(toSend)
   }
 
 
   return (
     <>
       <form className='newBlogForm' onSubmit={handleSubmit}>
-        Author: <input type='text' name='author' onChange={handleAuthorChange} /><br />
-        Title: <input type='text' name='title' onChange={handleTitleChange} /><br />
-        URL: <input type='text' name='url' onChange={handleUrlChange} /><br />
-        <button type='submit'>Create</button>
+        Author: <input type='text' name='author' placeholder='Please enter authors name' onChange={handleAuthorChange} /><br />
+        Title: <input type='text' name='title' placeholder='Please enter blog title' onChange={handleTitleChange} /><br />
+        URL: <input type='text' name='url' placeholder='Please enter blogs home address' onChange={handleUrlChange} /><br />
+        <button type='submit'>create</button>
       </form>
     </>
   )

@@ -4,8 +4,8 @@ const Toggleable = forwardRef((props, ref) => {
 
   const [ visible, setVisible ] = useState(false)
 
-  const showWhenVisible = { "display": visible ? '' : "none"}
-  const hideWhenVisible = { "display": visible ? "none" : ''}
+  const showWhenVisible = { 'display': visible ? '' : 'none' }
+  const hideWhenVisible = { 'display': visible ? 'none' : '' }
 
   const toggleVisibility = () => {
     console.log('visibility changed: ', visible)
@@ -32,3 +32,5 @@ const Toggleable = forwardRef((props, ref) => {
 })
 
 export default Toggleable
+
+Toggleable.displayName = 'Toggleable'

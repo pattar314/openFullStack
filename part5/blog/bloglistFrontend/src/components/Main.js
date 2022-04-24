@@ -9,6 +9,8 @@ const Main = ({ username, logout, newNotification }) => {
 
   const [blogs, setBlogs] = useState([])
 
+  console.log('processed username: ', username)
+
 
   useEffect( () => {
     blogService.getAll().then(retrievedBlogs => {
@@ -18,14 +20,7 @@ const Main = ({ username, logout, newNotification }) => {
     )
   }, [])
 
-
-
-  const blogChange = (newBlog) => {
-    setBlogs( [...blogs, newBlog])
-  }
-
-  const deleteBlog = async (blogId) => {
-    // TODO fix authorization issues probably build request
+  const createAuthorization = () => {
     const localUser = window.localStorage.getItem('blogUser')
     const converted = JSON.parse(localUser)
     const authorization = `Bearer ${converted.token}`
@@ -34,7 +29,32 @@ const Main = ({ username, logout, newNotification }) => {
       headers: { Authorization: authorization }
     }
 
-    const deletedBlog = await axios.delete(`/api/blogs/${blogId}`, options)
+    return { converted, authorization, options }
+  }
+
+
+
+  const createNewBlog = async (newBlog) => {
+    let auth = createAuthorization()
+    // console.log('authorization created: ', auth)
+    let response = await axios.post('/api/blogs', newBlog, auth.options)
+    if(response.status === 201){
+      // console.log('add form response: ', response)
+      const toSend = {
+        content: `Blog: ${response.data.title} added successfully`,
+        status: 'success'
+      }
+      newNotification(toSend)
+      setBlogs( [...blogs, response.data])
+    }
+  }
+
+
+  const deleteBlog = async (blogId) => {
+    // TODO fix authorization issues probably build request
+    let auth = createAuthorization()
+
+    const deletedBlog = await axios.delete(`/api/blogs/${blogId}`, auth.options)
     console.log('deletedBlog', deletedBlog)
 
     let newList = blogs.filter((blog) => blog.id !== blogId)
@@ -52,15 +72,9 @@ const Main = ({ username, logout, newNotification }) => {
     }
 
     try{
-      const localUser = window.localStorage.getItem('blogUser')
-      const converted = JSON.parse(localUser)
-      const authorization = `Bearer ${converted.token}`
+      const auth = createAuthorization()
 
-      const options = {
-        headers: { Authorization: authorization }
-      }
-
-      let updatedNote = await axios.put(`/api/blogs/${blog.id}`, body, options)
+      let updatedNote = await axios.put(`/api/blogs/${blog.id}`, body, auth.options)
       console.log('updated note: ', updatedNote)
       if (updatedNote.status === 200 || updatedNote.status === 201){
         console.log('blog updated')
@@ -85,11 +99,11 @@ const Main = ({ username, logout, newNotification }) => {
     <>
       <h2>blogs</h2>
       <p>{ username } is logged in <button onClick={logout}>Logout</button></p>
-      <Toggleable buttonLabel='new note'>
-        <BlogAddForm newNotification={newNotification} blogChange={blogChange} />
+      <Toggleable buttonLabel='new blog'>
+        <BlogAddForm  blogChange={createNewBlog} />
       </Toggleable>
       { blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} addLike={addLike} />
+        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} addLike={addLike} storedUser={username} />
       ) }
 
 
