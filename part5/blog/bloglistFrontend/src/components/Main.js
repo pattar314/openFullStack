@@ -15,6 +15,7 @@ const Main = ({ username, logout, newNotification }) => {
   useEffect( () => {
     blogService.getAll().then(retrievedBlogs => {
       const sortedBlogs = blogService.sortBlogs(retrievedBlogs)
+      console.log('sorted blogs: ', sortedBlogs)
       setBlogs( sortedBlogs )
     }
     )

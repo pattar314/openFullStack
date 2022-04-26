@@ -1,10 +1,16 @@
 const process = require('process')
 require('dotenv').config()
 
+//TODO redo blogs with a user attached
+
 const PORT = process.env.PORT
 const MONGODB_URI = process.env.NODE_ENV === 'test'
   ? process.env.TEST_MONGODB_URI
   : process.env.MONGODB_URI
+
+console.log('mongodburi is: ', MONGODB_URI)
+
+//ObjectId('622089db084b403eab7b5736')
 
 const blogs = [
   {
@@ -14,7 +20,7 @@ const blogs = [
     url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
     likes: 5,
     'user': [
-      '621c62eacf39373a04fe2d8b'
+      '622089db084b403eab7b5736'
     ],
     __v: 0
   },
@@ -25,7 +31,7 @@ const blogs = [
     url: 'https://reactpatterns.com/',
     likes: 7,
     'user': [
-      '621c62eacf39373a04fe2d8b'
+      '622089db084b403eab7b5736'
     ],
     __v: 0
   },
@@ -36,7 +42,7 @@ const blogs = [
     url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
     likes: 12,
     'user': [
-      '621c62eacf39373a04fe2d8b'
+      '622089db084b403eab7b5736'
     ],
     __v: 0
   },
@@ -47,7 +53,7 @@ const blogs = [
     url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
     likes: 10,
     'user': [
-      '621c62eacf39373a04fe2d8b'
+      '622089db084b403eab7b5736'
     ],
     __v: 0
   },
@@ -58,7 +64,7 @@ const blogs = [
     url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
     likes: 0,
     'user': [
-      '621c62eacf39373a04fe2d8b'
+      '622089db084b403eab7b5736'
     ],
     __v: 0
   },
@@ -69,7 +75,7 @@ const blogs = [
     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
     likes: 2,
     'user': [
-      '621c62eacf39373a04fe2d8b'
+      '622089db084b403eab7b5736'
     ],
     __v: 0
   }

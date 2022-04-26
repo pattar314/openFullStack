@@ -7,25 +7,45 @@ const process = require('process')
 require('dotenv').config()
 require('express-async-errors')
 
-/*
+
 const demo = require('./../utilities/config').blogs
 
- blogRouter.get('/populate', async (req, res) => {
+blogRouter.get('/populate', async (req, res) => {
   await Blog.deleteMany({})
-  let blogObjects = demo.map((item) => new Blog({
-    title: item.title,
-    author: item.author,
-    url: item.url,
-    likes: item.likes
-  })
-  )
 
-  let promiseArray = blogObjects.map(b => b.save())
-  await Promise.all(promiseArray)
-  console.log('finished')
-  res.send('finished')
+  // let body = req.body
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
+  if (!decodedToken || !decodedToken.id){
+    console.log('token not found or decoding failed')
+    return res.status(401).json({ error: 'token missing or invalid' }).end()
+  } else {
+    const user = await User.findById(decodedToken.id)
+
+    let blogObjects = demo.map((item) => new Blog({
+      user: user.id,
+      title: item.title,
+      author: item.author,
+      url: item.url,
+      likes: item.likes
+    })
+    )
+
+    let promiseArray = blogObjects.map(blog => {
+      let result = blog.save()
+
+      user.blogs = user.blogs.concat(result._id)
+
+      User.findByIdAndUpdate(user._id, user)
+    })
+
+    await Promise.all(promiseArray)
+    console.log('finished')
+    res.send('finished')
+
+  }
+
 })
-*/
+
 
 
 
@@ -73,7 +93,7 @@ blogRouter.post('/', extractUser, async (req, res) => {
 
 // Read all
 blogRouter.get('/', async (req, res) => {
-  let blogs = await Blog.find({})
+  const blogs = await Blog.find({})
     .populate('user', { username: 1, name: 1, id: 1 })
 
   console.log('result: ', blogs)

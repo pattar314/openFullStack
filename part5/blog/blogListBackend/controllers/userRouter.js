@@ -3,7 +3,7 @@ const userRouter = require('express').Router()
 const bcrypt = require('bcrypt')
 
 userRouter.get('/', async (req, res) => {
-  let users = await User.find({})
+  const users = await User.find({})
     .populate('blogs', { title: 1 })
 
   if(!(users)){
