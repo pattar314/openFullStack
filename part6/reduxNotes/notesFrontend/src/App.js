@@ -1,13 +1,21 @@
-import { createStore } from 'redux'
+// import { useEffect } from 'react'
+// import { useDispatch } from 'react-redux'
 import './App.css'
 import NewNoteForm from './components/NewNoteForm'
 import Notes from './components/Notes'
-import noteReducer from './reducers/noteReducer'
+import VisibilityFilter from './components/VisibilityFilter'
+// import noteReducer from './reducers/noteReducer'
 
-const store = createStore(noteReducer)
 
 
-store.dispatch({
+ 
+
+const App = () => {
+
+// const dispatch = useDispatch()
+
+/* 
+dispatch({
   type: 'NEW_NOTE',
   data: {
     content: 'the app state is in redux store',
@@ -16,7 +24,7 @@ store.dispatch({
   }
 })
 
-store.dispatch({
+dispatch({
   type: 'NEW_NOTE',
   data: {
     content: 'state changes are made with actions',
@@ -24,22 +32,17 @@ store.dispatch({
     id: 4
   }
 }) 
+ */
 
 
- 
-
-const App = () => {
-
-  const filterSelected = (value) => {
-    console.log(value)
-  }
-
+/* useEffect(() => {
+  noteService.getAll().then(notes => dispatch(setNotes(notes)))
+}, [dispatch])
+ */
   return (
     <div className="App-wrapper">
       <NewNoteForm />
-      all <input type='radio' name='filter' onChange={() => filterSelected('ALL')} />
-      important <input type='radio' name='filter' onChange={() => filterSelected('IMPORTANT')} />
-      nonimportant <input type='radio' name='filter' onChange={() => filterSelected('NONIMPORTANT')} />
+      <VisibilityFilter />
       <Notes />
 
     </div>

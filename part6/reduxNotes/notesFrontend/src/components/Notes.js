@@ -5,16 +5,22 @@ import Note from './Note'
 
 const Notes = () => {
   const dispatch = useDispatch()
-  const state = useSelector(state => state.notes)
-  console.log('state: ', state.notes)
+  const notes = useSelector(({ filter, notes }) => {
+    if(filter === 'ALL'){
+      return notes
+    }
+    return filter === 'IMPORTANT' 
+    ? notes.filter(note => note.important)
+    : notes.filter(note => !note.important)
+  })
   
   return (
     <ul>
-    { state.notes.map( note => 
+    { notes.map( note => 
       <Note 
         key={ note.id }
         note={ note }
-        handleClick={ ()=> dispatch(toggleImportanceOf(note.id)) }
+        handleClick={ () => dispatch(toggleImportanceOf(note.id)) }
         />
       ) }
   </ul>
