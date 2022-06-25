@@ -26,24 +26,10 @@ const noteReducer = ( state = initialState, action) => {
 
 const noteSlice = createSlice({
   name: 'notes',
-  initialState: [ {
-      content: 'the app state is in redux store',
-      important: true,
-      id: 3
-    },
-     {
-      content: 'state changes are made with actions',
-      important: false,
-      id: 4
-    }],
+  initialState: [],
   reducers: {
     createNote(state, action){
-      const content = action.payload
-      state.push({
-        content,
-        important: false,
-        id: generateID()
-      })
+      state.push(action.payload)
     },
     toggleImportanceOf(state, action){
       const id = action.payload

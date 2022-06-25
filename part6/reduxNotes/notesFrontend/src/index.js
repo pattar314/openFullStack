@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
 import filterReducer from './reducers/filterReducer'
 import { configureStore } from '@reduxjs/toolkit'
-// import noteService from './services/notes'
-import noteReducer from './reducers/noteReducer'
+import noteService from './services/notes'
+import noteReducer, { setNotes } from './reducers/noteReducer'
 import './index.css'
 import App from './App'
 
@@ -15,7 +15,7 @@ const store = configureStore({
   }
 })
 
-// noteService.getAll().then(notes => store.dispatch(setNotes(notes)))
+noteService.getAll().then(notes => store.dispatch(setNotes(notes)))
 
 console.log(store.getState())
 
