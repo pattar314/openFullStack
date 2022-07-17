@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getId, vote } from '../reducers/anecdoteReducer'
+import { getId } from '../reducers/anecdoteReducer'
 
 
 const baseUrl = 'http://localhost:3001/anecdotes'
@@ -20,9 +20,12 @@ const createNew = async (content) => {
 }
 
 const castVote = async (id) => {
-  const toSend = await vote(id)
-  console.log('tosend 1: ', toSend)
-  const response = axios.put(baseUrl, toSend)
+  const initial = await axios.get(`${baseUrl}/${id}`)
+  const initialData = initial.data
+  console.log('initialData: ', initialData)
+  const toSend = {...initialData, votes: initialData['votes'] + 1}
+  console.log('tosend: ', toSend)
+  const response = await axios.put(`${baseUrl}/${id}`, toSend)
   console.log('anecdotes castVote: ', response.data)
   return response
 }

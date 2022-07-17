@@ -48,7 +48,6 @@ export const initializeAnecdotes = () => {
 
 export const addAnecdote = (content) => {
   return async dispatch => {
-    console.log('add anecdote recieved data, step 1 complete: ', content)
     let processed = await anecdoteServices.createNew(content)
     console.log('add anecdote processed: ', processed)
     await dispatch(appendAnecdotes(processed))
@@ -58,8 +57,29 @@ export const addAnecdote = (content) => {
 
 export const vote = (id) => {
   return async dispatch => {
-    const response = await dispatch(anecdoteVote(id))
-    console.log('response 1: ', response)
-    return response
+
+    // async service function returns data
+    // action to modify state based on retrieved data
+
+
+
+
+    const service = await anecdoteServices.castVote(id)
+    console.log('vote response: ', service)
+
+    const updatedState2 = dispatch(anecdoteVote(id))
+    console.log('updated state2: ', updatedState2)
+
+  
+
+    return updatedState2
+
+    /*  
+    console.log('av: ', av)
+
+    console.log('voted: ', voted)
+    
+    return av  
+    */
   }  
 }

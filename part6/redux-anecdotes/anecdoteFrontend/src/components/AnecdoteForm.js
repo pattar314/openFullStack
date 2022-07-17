@@ -12,7 +12,7 @@ const AnecdoteForm = () => {
     // await checked
     // first funtion
     let newAnecdote = await dispatch(addAnecdote(event.target.newAnecdoteInput.value))
-    console.log('new anecdote in form : ', newAnecdote)
+    // console.log('new anecdote in form : ', newAnecdote)
     dispatch(setNotification(`you added ${newAnecdote.content}`))
     setTimeout(() => {
       dispatch(clearNotification())
