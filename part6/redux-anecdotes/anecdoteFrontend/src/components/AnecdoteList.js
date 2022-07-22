@@ -1,18 +1,18 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import { vote } from '../reducers/anecdoteReducer'
 import { setNotification } from '../reducers/notificationReducer'
 // import anecdoteServices from './../services/anecdotes'
 
-const AnecdoteList = () => {
+const AnecdoteList = (props) => {
   const dispatch = useDispatch()
 
-  const filter = useSelector(state => state.filter)
+  const filter = props.filter
   // console.log('filter update: ', filter)
   const regx = new RegExp( filter )
 
 
-  const anecdotes = useSelector(state => state.anecdotes)
+  const anecdotes = props.anecdotes
   const filteredAnecdotes = anecdotes.filter(a => regx.exec(a.content.toLowerCase()))
 
   const listVote = async (id) => {
@@ -45,10 +45,18 @@ const AnecdoteList = () => {
           <button onClick={() => listVote(anecdote.id)}>vote</button>
         </div>
       </div>
-    )}
-    </>
-    
+    )
+  }
+  </> 
   )
 }
 
-export default AnecdoteList
+const mapStateToProps = ( state ) => {
+  return {
+    filter: state.filter,
+    anecdotes: state.anecdotes
+  }
+}
+
+const ConnectedAnecdoteList = connect(mapStateToProps)(AnecdoteList)
+export default ConnectedAnecdoteList
