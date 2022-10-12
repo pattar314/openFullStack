@@ -7,12 +7,14 @@ const loginRouter = require('./controllers/loginRouter')
 // const loginRouter = require('./controllers/loginRouter')
 const middleware = require('./utilities/middleware')
 const mongoose = require('mongoose')
-const app = express()
 require('dotenv').config()
 const config = require('./utilities/config')
 const errorHandler = require('./utilities/errorHandler')
 const testRouter = require('./controllers/testRouter')
 const process = require('process')
+
+const app = express()
+
 
 app.use(cors())
 app.use(express.static('build'))
