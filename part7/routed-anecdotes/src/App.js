@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, redirect, Route, Routes, useMatch, useNavigate } from 'react-router-dom'
+import { useField } from './hooks/customHooks'
 
 const Menu = () => {
 
@@ -36,7 +37,9 @@ const Anecdote = ({anecdotes}) => {
   
   const id = useMatch('/anecdotes/:id').params.id
   
-  
+  console.log('id: ', id)
+
+  console.log('anecdotes: ', anecdotes)
   const stepOne = anecdotes.filter((a) => a.id === Number(id))[0]
 
 
@@ -76,20 +79,28 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('text')
 
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    console.log(`new: ${content.properties.value}, ${author.properties.value}, ${info.properties.value}`)
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.properties.value,
+      author: author.properties.value,
+      info: info.properties.value,
       votes: 0
     })
   }
+
+  const resetForm = () => {
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
 
   return (
     <div>
@@ -97,17 +108,18 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...content.properties} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...author.properties} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input {...info.properties} />
         </div>
         <button>create</button>
+        <button type='button' onClick={() => resetForm()}>reset</button>
       </form>
     </div>
   )
@@ -132,7 +144,7 @@ const App = () => {
     }
   ])
 
-  const [notification, setNotification] = useState('')
+
   const [message, setMessage] = useState(false)
   const navigate = useNavigate()
 
