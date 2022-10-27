@@ -9,8 +9,10 @@ import { useEffect, useState } from "react"
 
   useEffect( () => {
     const grabCountry = async () => {
-      const request = await axios.get(`http://restcountries.com/v3.1/name/${country}/fullText=true`)
-      console.log('request: ', request)
+      const request = await axios.get(`https://restcountries.com/v3.1/name/${name}?fullText=true`)
+      console.log('request: ', request.data[0])
+      setCountry(request.data[0])
+      return request.data[0]
     }
     grabCountry(name)
     
