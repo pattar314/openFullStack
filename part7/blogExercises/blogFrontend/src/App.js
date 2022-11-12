@@ -16,12 +16,11 @@ const App = () => {
 
   const dispatch = useDispatch()
   const state = useSelector(state => state)
-  console.log('retrieved state: ', state)
   const loggedUser = state.auth.loggedUser ? state.auth.loggedUser : null
   const username = state.username ? state.username : null
   const usernameInput = state.auth.usernameInput ? state.auth.usernameInput : null
   const passwordInput = state.auth.passwordInput ? state.auth.passwordInput : null
-  const message = state.message ? state.message : null
+  const message = state.notification ? state.notification : null
 
 
 
@@ -39,7 +38,6 @@ const App = () => {
 
   const initialBlogs = async ( ) => {
     const data = await blogs.getAll()
-    console.log('the initial blogs are: ', data)
     dispatch(setBlogs(data))
   }
 
