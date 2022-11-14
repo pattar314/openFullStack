@@ -1,22 +1,27 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Blog from './Blog'
 import blogService from './../services/blogs'
 import BlogAddForm from './BlogAddForm'
 import Toggleable from './Toggleable'
 import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { likeBlog, setBlogs } from '../reducers/blogSlice'
 
 const Main = ({ username, logout, newNotification }) => {
 
-  const [blogs, setBlogs] = useState([])
+  const state = useSelector(state => state)
+  const dispatch = useDispatch()
+  const setBlogState = ( data ) => {
+    dispatch(setBlogs(data))
+  }
 
   console.log('processed username: ', username)
 
 
   useEffect( () => {
     blogService.getAll().then(retrievedBlogs => {
-      const sortedBlogs = blogService.sortBlogs(retrievedBlogs)
-      console.log('sorted blogs: ', sortedBlogs)
-      setBlogs( sortedBlogs )
+      setBlogState( retrievedBlogs )
+      console.log('blog state: ', state.blogs)
     }
     )
   }, [])
@@ -46,7 +51,7 @@ const Main = ({ username, logout, newNotification }) => {
         status: 'success'
       }
       newNotification(toSend)
-      setBlogs( [...blogs, response.data])
+      setBlogState( [...state.blogs, response.data])
     }
   }
 
@@ -58,8 +63,8 @@ const Main = ({ username, logout, newNotification }) => {
     const deletedBlog = await axios.delete(`/api/blogs/${blogId}`, auth.options)
     console.log('deletedBlog', deletedBlog)
 
-    let newList = blogs.filter((blog) => blog.id !== blogId)
-    setBlogs(newList)
+    let newList = state.blogs.filter((blog) => blog.id !== blogId)
+    setBlogState(newList)
   }
 
 
@@ -71,17 +76,15 @@ const Main = ({ username, logout, newNotification }) => {
       url: blog.url,
       likes: blog.likes + 1
     }
+    console.log('body:', body)
 
     try{
       const auth = createAuthorization()
 
-      let updatedNote = await axios.put(`/api/blogs/${blog.id}`, body, auth.options)
-      console.log('updated note: ', updatedNote)
-      if (updatedNote.status === 200 || updatedNote.status === 201){
-        console.log('blog updated')
-        blogService.getAll().then(blogs =>
-          setBlogs( blogs )
-        )
+      let updatedBlog = await axios.put(`/api/blogs/${blog.id}`, body, auth.options)
+      if (updatedBlog.status === 200 || updatedBlog.status === 201){
+        const data = updatedBlog.data
+        dispatch(likeBlog(data))
       }else {
         console.log('there was an error in else')
       }
@@ -93,7 +96,7 @@ const Main = ({ username, logout, newNotification }) => {
   /*
     const newBlogList = blogs.filter((blog) => blog.id !== blogId)
     blogService.deleteBlog(newBlogList)
-    setBlogs(newBlogList)
+    setBlogState(newBlogList)
 
  */
   return (
@@ -103,9 +106,9 @@ const Main = ({ username, logout, newNotification }) => {
       <Toggleable buttonLabel='new blog'>
         <BlogAddForm  blogChange={createNewBlog} />
       </Toggleable>
-      { blogs.map(blog =>
+      { blogService.sortBlogs(state.blogs.map(blog =>
         <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} addLike={addLike} storedUser={username} />
-      ) }
+      )) }
 
 
     </>

@@ -6,9 +6,9 @@ import './styles/temp.css'
 import Login from './components/Login'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoggedUser, setPasswordInput, setUsernameInput } from './reducers/authSlice'
-import { loginHook, logoutHook } from './reducers/usernameSlice'
-import { setNotification } from './reducers/notificationSlice'
-import blogs from './services/blogs'
+import { loginHook, logoutHook } from './reducers/usersSlice'
+import { clearNotification, setNotification } from './reducers/notificationSlice'
+import blogService from './services/blogs'
 import { setBlogs } from './reducers/blogSlice'
 
 
@@ -17,10 +17,8 @@ const App = () => {
   const dispatch = useDispatch()
   const state = useSelector(state => state)
   const loggedUser = state.auth.loggedUser ? state.auth.loggedUser : null
-  const username = state.username ? state.username : null
   const usernameInput = state.auth.usernameInput ? state.auth.usernameInput : null
   const passwordInput = state.auth.passwordInput ? state.auth.passwordInput : null
-  const message = state.notification ? state.notification : null
 
 
 
@@ -33,11 +31,12 @@ const App = () => {
       dispatch(loginHook(processedUser.username))
     }
     initialBlogs()
+    console.log('users: ', state.users.userlist)
   }, [])
 
 
   const initialBlogs = async ( ) => {
-    const data = await blogs.getAll()
+    const data = await blogService.getAll()
     dispatch(setBlogs(data))
   }
 
@@ -52,9 +51,9 @@ const App = () => {
       console.log('login succeeded')
       dispatch(setLoggedUser(retrievedUser))
       dispatch(loginHook(retrievedUser.username))
-      console.log('app user: ', username)
+      console.log('app user: ', user.username)
       console.log('retrieved user: ', retrievedUser)
-      dispatch( setNotification( { content: `${username} logged in`, status: 'success' } ) )
+      dispatch( newNotification( { content: `${ retrievedUser.username } logged in`, status: 'success' } ) )
       dispatch(setUsernameInput(null))
       dispatch(setPasswordInput(null))
     } else {
@@ -63,17 +62,20 @@ const App = () => {
     }
   }
 
-  const handleLogout = () => {
+  const logout = () => {
     dispatch( logoutHook() )
     dispatch( setLoggedUser( null) )
     window.localStorage.removeItem( 'blogUser' )
   }
 
+
+
   const newNotification = ( message ) => {
     console.log( 'app message: ', message )
     dispatch(setNotification( { content: message.content, status: message.status } ) )
     setTimeout( () => {
-      dispatch( setNotification(null) )
+      dispatch( clearNotification() )
+      console.log('test 1')
     }, 3000 )
   }
 
@@ -89,8 +91,8 @@ const App = () => {
 
   return (
     <div className='main-content'>
-      {message ? <Notification content={message.content} status={message.status} />: <></>}
-      { loggedUser ? <Main username={loggedUser.username} logout={handleLogout} newNotification={newNotification} />
+      { state.notification !== null ? <Notification content={state.notification.content} status={state.notification.status} />: <></>}
+      { loggedUser ? <Main username={loggedUser.username} logout={ logout } newNotification={newNotification} />
         : <Login handleUsernameChange={handleUsernameChange}
           handlePasswordChange={handlePasswordChange}
           handleLogin={handleLogin}

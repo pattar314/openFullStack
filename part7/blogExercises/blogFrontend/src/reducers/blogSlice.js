@@ -2,10 +2,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const blogSlice = createSlice({
-  name: 'blog',
-  initialState:{},
+  name: 'blogs',
+  initialState:[],
   reducers: {
     setBlogs: (state, action) => {
+      console.log('setting blogs: ', action.payload)
       return action.payload
     },
     addBlog: (state, action) => {
@@ -24,22 +25,18 @@ const blogSlice = createSlice({
       return updatedState
     },
     createComment: ( state, action ) => {
-      const modifiedState = state.map(i => {
-        if(i.id === action.payload.id){
-          state[i].comments.concat(action.payload.comment)
-        }
-      })
-      console.log('modified state: ', modifiedState)
-      return modifiedState
+      const toChange = state.find(i => i.id === action.payload.id)
+      const changedTarget = { ...toChange, comments: changedTarget.comments.concat(action.payload.comment) }
+      state.map(b => b.id === action.payload.id ? changedTarget : b)
     },
     likeBlog: ( state, action ) => {
-      return state.map(( i ) => {
-        if(i.id === action.payload.id){
-          i.likes = i.likes + 1
-        }
-      })
+      console.log('action payload: ', action.payload)
+      const toChange = state.find(b => b.id === action.payload.id)
+      const modified = { ...toChange, likes: toChange.likes + 1 }
+      const modifiedState = state.map(b => b.id === action.payload.id ? modified : b)
+      return modifiedState
     },
-    likeComment: ( state, action) => {
+    likeComment: ( state, action ) => {
       return state.map(( i ) => {
         if(i.id === action.payload.blogID){
           i.map(( j ) => {
