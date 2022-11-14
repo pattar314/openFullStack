@@ -25,6 +25,7 @@ const Blog = ({ blog, deleteBlog, storedUser, addLike }) => {
         <div className="expandedBottom" style={showBlog}>
           <b>URL: </b><div className="url">{blog.url}</div>
           <div className="likes"><b>Likes: </b><span className='like-counter'>{blog.likes} </span> <button id='like-button' onClick={() => addLike(blog) }>Like</button></div>
+          {console.log(`storedUser: ${storedUser}, blog.user.username:, ${blog.user.username}`)}
           { storedUser === blog.user.username ? deleteButton() : '' }
         </div>
       </div>
