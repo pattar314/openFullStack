@@ -1,0 +1,16 @@
+
+#message-banner{
+  height: 3em;
+  width: 80vw;
+  margin: auto;
+}
+
+.message-success {
+  color: green;
+  border: solid gray 4px;
+}
+
+.message-fail {
+  color: red;
+  border: solid gray 4px;
+}
