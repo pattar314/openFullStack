@@ -1,15 +1,17 @@
-import React, { useEffect } from 'react'
+// import React, { useEffect } from 'react'
 import Blog from './Blog'
 import blogService from './../services/blogs'
 import BlogAddForm from './BlogAddForm'
 import Toggleable from './Toggleable'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { likeBlog, setBlogs } from '../reducers/blogSlice'
+import { addBlog, likeBlog, setBlogs } from '../reducers/blogSlice'
 
-const Main = ({ username, logout, newNotification }) => {
+const Main = ({ newNotification }) => {
 
   const state = useSelector(state => state)
+  const username =  ( state.users.currentUser ? state.users.currentUser : null)
+  const blogList = useSelector(state => state.blogs.blogList)
   const dispatch = useDispatch()
   const setBlogState = ( data ) => {
     dispatch(setBlogs(data))
@@ -17,14 +19,14 @@ const Main = ({ username, logout, newNotification }) => {
 
   console.log('processed username: ', username)
 
-
+  /*
   useEffect( () => {
     blogService.getAll().then(retrievedBlogs => {
-      setBlogState( retrievedBlogs )
+      setBlogs( retrievedBlogs )
       console.log('blog state: ', state.blogs)
     }
     )
-  }, [])
+  }, []) */
 
   const createAuthorization = () => {
     const localUser = window.localStorage.getItem('blogUser')
@@ -42,16 +44,16 @@ const Main = ({ username, logout, newNotification }) => {
 
   const createNewBlog = async (newBlog) => {
     let auth = createAuthorization()
-    // console.log('authorization created: ', auth)
+    console.log('authorization created: ', auth)
     let response = await axios.post('/api/blogs', newBlog, auth.options)
     if(response.status === 201){
-      // console.log('add form response: ', response)
+      console.log('add form response: ', response)
       const toSend = {
         content: `Blog: ${response.data.title} added successfully`,
         status: 'success'
       }
       newNotification(toSend)
-      setBlogState( [...state.blogs, response.data])
+      dispatch(addBlog(newBlog))
     }
   }
 
@@ -93,6 +95,7 @@ const Main = ({ username, logout, newNotification }) => {
     }
   }
 
+
   /*
     const newBlogList = blogs.filter((blog) => blog.id !== blogId)
     blogService.deleteBlog(newBlogList)
@@ -101,12 +104,13 @@ const Main = ({ username, logout, newNotification }) => {
  */
   return (
     <>
-      <h2>blogs</h2>
-      <p>{ username } is logged in <button onClick={logout}>Logout</button></p>
-      <Toggleable buttonLabel='new blog'>
-        <BlogAddForm  blogChange={createNewBlog} />
-      </Toggleable>
-      { blogService.sortBlogs(state.blogs.map(blog =>
+      <div className='list-topper'>
+        <h2>Blog List</h2>
+        <Toggleable buttonLabel='new blog'>
+          <BlogAddForm className='blogForm' blogChange={createNewBlog} />
+        </Toggleable>
+      </div>
+      { blogService.sortBlogs(blogList.map(blog =>
         <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} addLike={addLike} storedUser={username} />
       )) }
 

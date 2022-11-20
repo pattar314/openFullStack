@@ -2,7 +2,7 @@ import axios from 'axios'
 const baseUrl = '/api/blogs'
 
 
-const getAll = async () => {
+const getAllBlogs = async () => {
   const request = await axios.get(baseUrl)
   return request.data
 }
@@ -14,5 +14,16 @@ const sortBlogs = (blogs) => {
   return blogs.reverse()
 }
 
+const findBlog = (userlist, id) => {
+  userlist.find(u => {
+    const blogList = u.blogList
+    const foundBlog = blogList.find(b => b._id === id)
+    if(foundBlog){
+      return foundBlog
+    }
+    return null
+  })
+}
 
-export default { getAll, sortBlogs }
+
+export default { getAllBlogs, sortBlogs, findBlog }

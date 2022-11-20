@@ -1,24 +1,29 @@
 import {  useEffect } from 'react'
 import Main from './components/Main'
-import { login } from './services/auth'
 import Notification from './components/Notification'
-import './styles/temp.css'
+import './styles/app.css'
 import Login from './components/Login'
+import AllUsersView from './components/AllUsersView'
+import SingleUserView from './components/SingleUserView'
 import { useDispatch, useSelector } from 'react-redux'
-import { setLoggedUser, setPasswordInput, setUsernameInput } from './reducers/authSlice'
-import { loginHook, logoutHook } from './reducers/usersSlice'
+import { setCurrentUser } from './reducers/authSlice'
+import { initalizeUserlist } from './reducers/usersSlice'
 import { clearNotification, setNotification } from './reducers/notificationSlice'
-import blogService from './services/blogs'
-import { setBlogs } from './reducers/blogSlice'
+// import blogs from './services/blogs'
+// import { setBlogs } from './reducers/blogSlice'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { initializeBlogs } from './reducers/blogSlice'
+import { logout } from './services/auth'
+import TopBar from './components/TopBar'
+import SingleBlogView from './components/SingleBlogView'
+// import { getUsers } from './services/auth'
 
 
 const App = () => {
 
   const dispatch = useDispatch()
-  const state = useSelector(state => state)
-  const loggedUser = state.auth.loggedUser ? state.auth.loggedUser : null
-  const usernameInput = state.auth.usernameInput ? state.auth.usernameInput : null
-  const passwordInput = state.auth.passwordInput ? state.auth.passwordInput : null
+  const message = useSelector(state => state.notification)
+  const currentUser = useSelector(state => state.auth.currentUser)
 
 
 
@@ -27,78 +32,38 @@ const App = () => {
     if (storedUser){
       console.log('there is a stored user: ', storedUser)
       const processedUser = JSON.parse(storedUser)
-      dispatch(setLoggedUser(processedUser))
-      dispatch(loginHook(processedUser.username))
+      dispatch(setCurrentUser(processedUser))
     }
-    initialBlogs()
-    console.log('users: ', state.users.userlist)
+    dispatch(initializeBlogs())
+    dispatch(initalizeUserlist())
   }, [])
 
 
-  const initialBlogs = async ( ) => {
-    const data = await blogService.getAll()
-    dispatch(setBlogs(data))
-  }
-
-
-
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    console.log(`Attempting to login with username: ${ usernameInput }, password: ${ passwordInput }`)
-    const user = { username: usernameInput, password: passwordInput }
-    let retrievedUser = await login(user)
-    if (retrievedUser){
-      console.log('login succeeded')
-      dispatch(setLoggedUser(retrievedUser))
-      dispatch(loginHook(retrievedUser.username))
-      console.log('app user: ', user.username)
-      console.log('retrieved user: ', retrievedUser)
-      dispatch( newNotification( { content: `${ retrievedUser.username } logged in`, status: 'success' } ) )
-      dispatch(setUsernameInput(null))
-      dispatch(setPasswordInput(null))
-    } else {
-      console.log('login failed')
-      dispatch( setNotification( { content: 'Login failed', status: 'fail' } ) )
-    }
-  }
-
-  const logout = () => {
-    dispatch( logoutHook() )
-    dispatch( setLoggedUser( null) )
-    window.localStorage.removeItem( 'blogUser' )
-  }
-
-
-
   const newNotification = ( message ) => {
-    console.log( 'app message: ', message )
     dispatch(setNotification( { content: message.content, status: message.status } ) )
     setTimeout( () => {
       dispatch( clearNotification() )
-      console.log('test 1')
     }, 3000 )
   }
 
-  const handleUsernameChange = (event) => {
-    dispatch(setUsernameInput(event.target.value))
-  }
-
-  const handlePasswordChange = (event) => {
-    dispatch(setPasswordInput(event.target.value))
-  }
 
 
 
   return (
     <div className='main-content'>
-      { state.notification !== null ? <Notification content={state.notification.content} status={state.notification.status} />: <></>}
-      { loggedUser ? <Main username={loggedUser.username} logout={ logout } newNotification={newNotification} />
-        : <Login handleUsernameChange={handleUsernameChange}
-          handlePasswordChange={handlePasswordChange}
-          handleLogin={handleLogin}
-          username={usernameInput}
-          password={passwordInput}
-        /> }
+      <Router>
+        { currentUser ? <TopBar /> : ''}
+        {message !== null ? <Notification content={message.content} status={message.status} />: <></>}
+        <section className='content-container'>
+          <Routes>
+            <Route path='/blogs/:id' element={ currentUser ? <SingleBlogView /> :  <Navigate replace to='/login' /> } />
+            <Route path='/users/:id' element={ currentUser ? <SingleUserView /> :  <Navigate replace to='/login' /> } />
+            <Route path='/users' element={ currentUser ? <AllUsersView /> : <Navigate replace to='/login' />} />
+            <Route path='/login' element={ currentUser ? <Navigate replace to='/' /> : <Login newNotification={newNotification} /> } />
+            <Route path='/' element={ currentUser ? <Main logout={ logout } newNotification={newNotification} /> : <Navigate replace to='/login' />} />
+          </Routes>
+        </section>
+      </Router>
     </div>
   )
 }

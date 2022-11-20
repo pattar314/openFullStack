@@ -1,15 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { getUsers } from '../services/auth'
 
+export const initalizeUserlist = () => {
+  return async dispatch => {
+    const retrievedUsers = await getUsers()
+    console.log('userlist: ', retrievedUsers)
+    dispatch(setUserlist(retrievedUsers))
+  }
+}
 
 const usersSlice = createSlice({
   name: 'users',
-  initialState: { currentUser: null, userlist: [] },
+  initialState: { selectedUser: null, userlist: [] },
   reducers: {
-    'loginHook': (state, action) => ({ ...state, currentUser: action.payload }),
-    'logoutHook': ( state ) => ({ ...state, currentUser: null }),
-    'setUserList': ( state , action) => ({ ...state, userlist: action.payload })
+    'setSelectedUser': (state, action) => ({ ...state, selectedUser: action.payload }),
+    'logoutAction': ( state ) => ({ ...state, currentUser: null }),
+    'setUserlist': ( state , action) => ({ ...state, userlist: action.payload })
   }
 })
 
-export const { loginHook, logoutHook, setUserList } = usersSlice.actions
+export const { loginAction, logoutAction, setUserlist } = usersSlice.actions
 export default usersSlice.reducer

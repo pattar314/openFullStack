@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
-import { setLoggedUser } from '../reducers/authSlice'
-import { logoutHook } from '../reducers/usersSlice'
+import { setCurrentUser } from '../reducers/authSlice'
+import { logoutAction } from '../reducers/usersSlice'
 
 
 
@@ -22,14 +22,14 @@ const login = async (user) => {
 
 const logout = () => {
   const dispatch = useDispatch()
-  dispatch( logoutHook () )
-  dispatch( setLoggedUser( null) )
+  dispatch( logoutAction () )
+  dispatch( setCurrentUser( null) )
   window.localStorage.removeItem( 'blogUser' )
 }
 
 const getUsers = async () => {
   const users = await axios.get('/api/users')
-  return users
+  return users.data
 }
 
 

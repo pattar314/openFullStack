@@ -9,6 +9,7 @@ const Notification = ({ content, status }) => {
       'fontSize': '2em',
       'borderRadius': '15px 15px',
       'border': 'solid grey 1.5px',
+      'display': 'flex',
       'margin': 'auto'
     },
     success: {
