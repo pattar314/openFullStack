@@ -17,7 +17,7 @@ export const initializeBlogs = () => {
 
 const blogSlice = createSlice({
   name: 'blogs',
-  initialState: { blogList: [], blogAddInput: { author: '', title: '', url: '' } },
+  initialState: { blogList: [], blogAddInput: { author: '', title: '', url: '' }, selectedBlog: {} },
   reducers: {
     setAuthorInput: (state, action) => {
       return ({ ...state, blogAddInput: { ...state.blogAddInput, author: action.payload } })
@@ -60,6 +60,7 @@ const blogSlice = createSlice({
       const toChange = state.blogList.find(b => b.id === action.payload.id)
       const modified = { ...toChange, likes: toChange.likes + 1 }
       const modifiedState = state.blogList.map(b => b.id === action.payload.id ? modified : b)
+      console.log('modified state: ', modifiedState)
       return modifiedState
     },
     likeComment: ( state, action ) => {
@@ -72,10 +73,13 @@ const blogSlice = createSlice({
           })
         }
       })
+    },
+    setSelectedBlog: (state, action) => {
+      return { ...state, selectedBlog: action.payload }
     }
 
   }
 })
 
-export const { setBlogs, addBlog, deleteBlog, updateBlog, createComment, likeBlog, likeComment, setAuthorInput, setTitleInput, setUrlInput, resetInput } = blogSlice.actions
+export const { setBlogs, addBlog, deleteBlog, updateBlog, createComment, likeBlog, likeComment, setAuthorInput, setTitleInput, setUrlInput, resetInput, setSelectedBlog } = blogSlice.actions
 export default blogSlice.reducer

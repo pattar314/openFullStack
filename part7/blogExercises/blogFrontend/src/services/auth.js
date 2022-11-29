@@ -4,6 +4,18 @@ import { setCurrentUser } from '../reducers/authSlice'
 import { logoutAction } from '../reducers/usersSlice'
 
 
+const createAuthorization = () => {
+  const localUser = window.localStorage.getItem('blogUser')
+  const converted = JSON.parse(localUser)
+  const authorization = `Bearer ${converted.token}`
+
+  const options = {
+    headers: { Authorization: authorization }
+  }
+
+  return { converted, authorization, options }
+}
+
 
 
 const login = async (user) => {
@@ -33,4 +45,4 @@ const getUsers = async () => {
 }
 
 
-export { login, logout, getUsers }
+export { login, logout, getUsers, createAuthorization }

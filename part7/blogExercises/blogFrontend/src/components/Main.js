@@ -6,44 +6,29 @@ import Toggleable from './Toggleable'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { addBlog, likeBlog, setBlogs } from '../reducers/blogSlice'
+import { useEffect } from 'react'
 
 const Main = ({ newNotification }) => {
 
   const state = useSelector(state => state)
-  const username =  ( state.users.currentUser ? state.users.currentUser : null)
+  const currentUser = useSelector( state => state.auth.currentUser)
   const blogList = useSelector(state => state.blogs.blogList)
   const dispatch = useDispatch()
   const setBlogState = ( data ) => {
     dispatch(setBlogs(data))
   }
 
-  console.log('processed username: ', username)
 
-  /*
+
   useEffect( () => {
-    blogService.getAll().then(retrievedBlogs => {
-      setBlogs( retrievedBlogs )
-      console.log('blog state: ', state.blogs)
-    }
-    )
-  }, []) */
+    console.log('main page load')
+  }, [])
 
-  const createAuthorization = () => {
-    const localUser = window.localStorage.getItem('blogUser')
-    const converted = JSON.parse(localUser)
-    const authorization = `Bearer ${converted.token}`
-
-    const options = {
-      headers: { Authorization: authorization }
-    }
-
-    return { converted, authorization, options }
-  }
 
 
 
   const createNewBlog = async (newBlog) => {
-    let auth = createAuthorization()
+    let auth = blogService.createAuthorization()
     console.log('authorization created: ', auth)
     let response = await axios.post('/api/blogs', newBlog, auth.options)
     if(response.status === 201){
@@ -60,7 +45,7 @@ const Main = ({ newNotification }) => {
 
   const deleteBlog = async (blogId) => {
     // TODO fix authorization issues probably build request
-    let auth = createAuthorization()
+    let auth = blogService.createAuthorization()
 
     const deletedBlog = await axios.delete(`/api/blogs/${blogId}`, auth.options)
     console.log('deletedBlog', deletedBlog)
@@ -72,16 +57,13 @@ const Main = ({ newNotification }) => {
 
   const addLike = async (blog) => {
     const body = {
-      user: blog.user,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
+      ...blog,
       likes: blog.likes + 1
     }
     console.log('body:', body)
 
     try{
-      const auth = createAuthorization()
+      const auth = blogService.createAuthorization()
 
       let updatedBlog = await axios.put(`/api/blogs/${blog.id}`, body, auth.options)
       if (updatedBlog.status === 200 || updatedBlog.status === 201){
@@ -96,12 +78,6 @@ const Main = ({ newNotification }) => {
   }
 
 
-  /*
-    const newBlogList = blogs.filter((blog) => blog.id !== blogId)
-    blogService.deleteBlog(newBlogList)
-    setBlogState(newBlogList)
-
- */
   return (
     <>
       <div className='list-topper'>
@@ -111,7 +87,7 @@ const Main = ({ newNotification }) => {
         </Toggleable>
       </div>
       { blogService.sortBlogs(blogList.map(blog =>
-        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} addLike={addLike} storedUser={username} />
+        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} addLike={addLike} storedUser={currentUser.username} />
       )) }
 
 

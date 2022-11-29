@@ -87,3 +87,7 @@ body {
   flex-direction: column;
   text-decoration: none;
 }
+
+.commentCard { 
+  margin: 1em;
+}

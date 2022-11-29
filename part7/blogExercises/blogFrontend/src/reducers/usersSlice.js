@@ -4,7 +4,7 @@ import { getUsers } from '../services/auth'
 export const initalizeUserlist = () => {
   return async dispatch => {
     const retrievedUsers = await getUsers()
-    console.log('userlist: ', retrievedUsers)
+    console.log('userlist reducer: ', retrievedUsers)
     dispatch(setUserlist(retrievedUsers))
   }
 }

@@ -14,15 +14,15 @@ const sortBlogs = (blogs) => {
   return blogs.reverse()
 }
 
-const findBlog = (userlist, id) => {
-  userlist.find(u => {
-    const blogList = u.blogList
-    const foundBlog = blogList.find(b => b._id === id)
-    if(foundBlog){
-      return foundBlog
-    }
-    return null
+const findBlog = async ( id ) => {
+  const blogList = await getAllBlogs()
+  console.log('bloglist: ', blogList)
+  const foundBlog = blogList.find( b => {
+    console.log(`b.id: ${b.id} === ${id}: ${b.id === id}`)
+    return b.id === id
   })
+
+  return foundBlog
 }
 
 

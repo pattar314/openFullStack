@@ -8,7 +8,7 @@ const TopBar = () => {
 
   const dispatch = useDispatch()
 
-  const currentUser = useSelector(state => state.users.currentUser)
+  const currentUser = useSelector(state => state.auth.currentUser)
 
   const logout = () => {
     dispatch( logoutAction() )
@@ -20,7 +20,7 @@ const TopBar = () => {
     <nav className='top-bar'>
       <Link to='/    ' className='nav-link'><h3>blogs</h3></Link>
       <Link to='/users' className='nav-link'><h3>users</h3></Link>
-      <span className='username-banner'><h2>Current user: { currentUser }</h2></span>
+      <span className='username-banner'><h2>Current user: { currentUser.username }</h2></span>
       <button onClick={ logout } className='logout-button'>logout</button>
     </nav>
   )
