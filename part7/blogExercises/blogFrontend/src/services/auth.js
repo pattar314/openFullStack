@@ -22,7 +22,6 @@ const login = async (user) => {
   console.log('user is: ', user)
   const request = await axios.post('/api/login', user).catch((response) => {return response})
   if(request.status === 200){
-    console.log('login succeeded')
     window.localStorage.setItem('blogUser', JSON.stringify( request.data ))
     return request.data
   }else {
@@ -35,7 +34,7 @@ const login = async (user) => {
 const logout = () => {
   const dispatch = useDispatch()
   dispatch( logoutAction () )
-  dispatch( setCurrentUser( null) )
+  dispatch( setCurrentUser( null ) )
   window.localStorage.removeItem( 'blogUser' )
 }
 

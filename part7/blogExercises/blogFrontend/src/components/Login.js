@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearLoginInput, setCurrentUser, setPasswordInput, setUsernameInput } from '../reducers/authSlice'
 import { login } from '../services/auth'
@@ -6,10 +6,6 @@ import { useNavigate } from 'react-router-dom'
 
 
 const Login = ( { newNotification }) => {
-
-  useEffect(() => {
-    console.log('login loading')
-  }, [])
 
   const usernameInput = useSelector(state => state.auth.usernameInput)
   const passwordInput = useSelector(state => state.auth.passwordInput)
@@ -31,10 +27,11 @@ const Login = ( { newNotification }) => {
     const user = { username: usernameInput, password: passwordInput }
     let retrievedUser = await login(user)
     if (retrievedUser){
-      console.log('login succeeded: ', retrievedUser)
+      console.log('login succeeded')
       dispatch(setCurrentUser(retrievedUser))
       dispatch(clearLoginInput())
       console.log('app user: ', retrievedUser.username)
+      console.log('retrieved user: ', retrievedUser)
       navigate('/')
       newNotification( { content: `${ retrievedUser.username } logged in`, status: 'success' } )
     } else {

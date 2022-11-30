@@ -11,7 +11,6 @@ import { useEffect } from 'react'
 const Main = ({ newNotification }) => {
 
   const state = useSelector(state => state)
-  const currentUser = useSelector( state => state.auth.currentUser)
   const blogList = useSelector(state => state.blogs.blogList)
   const dispatch = useDispatch()
   const setBlogState = ( data ) => {
@@ -87,7 +86,7 @@ const Main = ({ newNotification }) => {
         </Toggleable>
       </div>
       { blogService.sortBlogs(blogList.map(blog =>
-        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} addLike={addLike} storedUser={currentUser.username} />
+        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} addLike={addLike} />
       )) }
 
 

@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: { usernameInput: '', passwordInput: '', currentUser: {} },
+  initialState: { usernameInput: '', passwordInput: '', currentUser: null },
   reducers: {
     'setUsernameInput': (state, action) => {
       return { ...state, usernameInput: action.payload }
@@ -10,10 +10,11 @@ const authSlice = createSlice({
     'setPasswordInput': (state, action) => {
       return { ...state, passwordInput: action.payload }
     },
-    'clearLoginInput': () => {
-      return { usernameInput: '', passwordInput: '', loggedUser: '' }
+    'clearLoginInput': (state) => {
+      return { ...state, usernameInput: '', passwordInput: '' }
     },
     'setCurrentUser': (state, action) => {
+      console.log('current user redux: ', action.payload)
       return { ...state, currentUser: action.payload }
     }
   }

@@ -12,7 +12,7 @@ const TopBar = () => {
 
   const logout = () => {
     dispatch( logoutAction() )
-    dispatch( setCurrentUser( null) )
+    dispatch( setCurrentUser(null) )
     window.localStorage.removeItem( 'blogUser' )
   }
 
