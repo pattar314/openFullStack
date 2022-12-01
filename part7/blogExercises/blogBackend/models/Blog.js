@@ -21,6 +21,9 @@ const blogSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  comments: {
+    type: mongoose.Schema.Types.Array
   }
 })
 

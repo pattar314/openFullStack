@@ -17,7 +17,7 @@ export const initializeBlogs = () => {
 
 const blogSlice = createSlice({
   name: 'blogs',
-  initialState: { blogList: [], blogAddInput: { author: '', title: '', url: '' }, selectedBlog: {} },
+  initialState: { blogList: [], blogAddInput: { author: '', title: '', url: '' } },
   reducers: {
     setAuthorInput: (state, action) => {
       return ({ ...state, blogAddInput: { ...state.blogAddInput, author: action.payload } })
@@ -50,18 +50,25 @@ const blogSlice = createSlice({
       console.log('modified state: ', updatedState)
       return { ...state, blogList: updatedState }
     },
-    createComment: ( state, action ) => {
+    addComment: ( state, action ) => {
+      console.log('payload id: ', action.payload.id)
+      console.log('payload comment: ', action.payload.comment)
+      console.log('does the bloglist show: ', state.blogList)
       const toChange = state.blogList.find(i => i.id === action.payload.id)
-      const changedTarget = { ...toChange, comments: changedTarget.comments.concat(action.payload.comment) }
-      state.blogList.map(b => b.id === action.payload.id ? changedTarget : b)
+      console.log('tochange: ', toChange)
+      const newComments = toChange.comments.concat(action.payload.comment)
+      const changedTarget = { ...toChange, comments: newComments }
+      console.log('changed target: ', changedTarget)
+      const newList = state.blogList.map(b => b.id === action.payload.id ? changedTarget : b)
+      return { ...state, blogList: newList }
     },
     likeBlog: ( state, action ) => {
-      console.log('action payload: ', action.payload)
+      console.log('former state: ', { ...state })
       const toChange = state.blogList.find(b => b.id === action.payload.id)
       const modified = { ...toChange, likes: toChange.likes + 1 }
-      const modifiedState = state.blogList.map(b => b.id === action.payload.id ? modified : b)
-      console.log('modified state: ', modifiedState)
-      return modifiedState
+      const modifiedBlogList = state.blogList.map(b => b.id === action.payload.id ? modified : b)
+      console.log('modified state: ', { ...state, blogList: modifiedBlogList })
+      return { ...state, blogList: modifiedBlogList }
     },
     likeComment: ( state, action ) => {
       return state.blogList.map(( i ) => {
@@ -73,13 +80,9 @@ const blogSlice = createSlice({
           })
         }
       })
-    },
-    setSelectedBlog: (state, action) => {
-      return { ...state, selectedBlog: action.payload }
     }
-
   }
 })
 
-export const { setBlogs, addBlog, deleteBlog, updateBlog, createComment, likeBlog, likeComment, setAuthorInput, setTitleInput, setUrlInput, resetInput, setSelectedBlog } = blogSlice.actions
+export const { setBlogs, addBlog, deleteBlog, updateBlog, addComment, likeBlog, likeComment, setAuthorInput, setTitleInput, setUrlInput, resetInput } = blogSlice.actions
 export default blogSlice.reducer

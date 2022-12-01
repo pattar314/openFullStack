@@ -1,50 +1,68 @@
-import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import React, { useState } from 'react'
 import {  useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { setSelectedBlog } from '../reducers/blogSlice'
-import  { createComment } from '../reducers/blogSlice'
-import blogServices from '../services/blogs'
+import { likeBlog } from '../reducers/blogSlice'
+import  { addComment } from '../reducers/blogSlice'
+import { createAuthorization } from '../services/auth'
+import blogService from '../services/blogs'
 
-const SingleBlogView = ({ addLike }) => {
+const SingleBlogView = () => {
   const dispatch = useDispatch()
-  const [username, setUsername] = useState('')
-  // const [comments, setComments] = useState([])
+  const currentUser = useSelector(state => state.auth.currentUser)
+  const [commentInput, setCommentInput] = useState('')
 
-  const fetchBlog = async ( ) => {
-    const selectedBlog = await blogServices.findBlog(blogID)
-    console.log('fetch: ', selectedBlog)
-    setUsername(selectedBlog.user.username)
-    dispatch(setSelectedBlog(selectedBlog))
-    // selectedBlog.comments ? setComments(selectedBlog.comments) : null
+
+  const addLike = async (blog) => {
+    const body = {
+      ...blog,
+      likes: blog.likes + 1
+    }
+    console.log('body:', body)
+
+    try{
+      const auth = createAuthorization()
+      console.log('auth: ', auth)
+      let updatedBlog = await axios.put(`/api/blogs/${blog.id}`, body, auth.options)
+      if (updatedBlog.status === 200 || updatedBlog.status === 201){
+        const data = updatedBlog.data
+        console.log('updated blog data: ', data)
+        dispatch(likeBlog(data))
+      }else {
+        console.log('there was an error in else')
+      }
+    }catch(error){
+      console.log('there was an error: ', error)
+    }
   }
-
-  useEffect(() => {
-    fetchBlog()
-  }, [])
 
 
   const blogID = useParams().id
   const userlist = useSelector(state => state.users.userlist)
+  const selectedBlog = useSelector(state => state.blogs.blogList).filter(b => b.id === blogID)[0]
   console.log('userlist: ', userlist)
-  const selectedBlog = useSelector(state => state.blogs.selectedBlog)
   console.log('selectedBLog (required): ', selectedBlog)
 
-  const addComment = ( id, comment  ) => {
-    dispatch(createComment(id, comment))
+  const comment = ( e ) => {
+    e.preventDefault()
+    console.log(`id: ${blogID}, comment input: ${commentInput}`, )
+    blogService.createComment(blogID, commentInput)
+    dispatch( addComment({ id: blogID, comment: commentInput }) )
+    setCommentInput('')
   }
 
-  /*
+
   const commentList = () => {
-    if(comments !== []){
-      console.log('comments: ', comments)
-      return comments.map(c => {
-        <div className='comment-card'>{c}</div>
-      })
+    if(selectedBlog.comments !== []){
+      console.log('comments: ', selectedBlog.comments)
+      const list = selectedBlog.comments.map((c, index) => <div key={index}>{c}</div>)
+      return list
     } else {
-      return ['No comments yet would you like to add one?']
+      const placeholder = (<div>No comments yet would you like to add one?</div>)
+      return placeholder
     }
   }
- */
+
 
   return (
     <>
@@ -52,9 +70,11 @@ const SingleBlogView = ({ addLike }) => {
 
       <a href={selectedBlog.url}>{selectedBlog.url}</a>
       <div>{selectedBlog.likes} likes <button onClick={ () => addLike(selectedBlog) }>like</button></div>
-      <div>added by { username } </div>
-      <form onSubmit={addComment}><input placeholder='comment'/><button type='submit'>add comment</button> </form>
+      <div>added by { currentUser.username } </div>
+      <form onSubmit={comment}><input placeholder='comment' onChange={(e) => setCommentInput(e.target.value)} value={commentInput} /><button type='submit'>add comment</button> </form>
       <section className='comment-section'>
+        <h3>comments:</h3>
+        {commentList()}
       </section>
     </>
 

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { createAuthorization } from './auth'
 const baseUrl = '/api/blogs'
 
 
@@ -25,5 +26,20 @@ const findBlog = async ( id ) => {
   return foundBlog
 }
 
+const createComment = (id, comment) => {
+  try {
+    const auth = createAuthorization()
+    const createdComments = axios.post(`/api/blogs/${id}/comments`,  { comment }, auth.options)
+    if (createdComments.status === 200 || createdComments.status === 201){
+      const data = createdComments.data
+      console.log('updated comment data: ', data)
+    }else {
+      console.log('there was an error in else')
+    }
+  } catch(error){
+    console.error('there was an error in create comment service: ', error)
+  }
+}
 
-export default { getAllBlogs, sortBlogs, findBlog }
+
+export default { getAllBlogs, sortBlogs, findBlog, createComment }
