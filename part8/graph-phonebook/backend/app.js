@@ -55,9 +55,9 @@ const typeDefs = `
   type Mutation {
     addPerson(
       name: String!
-      phone: String
       street: String!
       city: String!
+      phone: String
     ): Person
     editNumber(
       name: String!
@@ -91,6 +91,7 @@ const resolvers = {
   },
   Mutation: {
     addPerson: (root, args) => {
+      console.log('test 1: ', args)
       if(persons.find(p => p.name === args.name )) {
         throw new GraphQLError('Name must be unique', {
           extensions: {
