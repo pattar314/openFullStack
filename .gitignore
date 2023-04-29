@@ -1,5 +1,5 @@
-/part*/*/.git
-*/node_modules
-*/.env
+.git
+/node_modules
+.env
 cypress/videos/
 node_modules
