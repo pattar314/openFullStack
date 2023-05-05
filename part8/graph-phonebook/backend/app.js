@@ -79,7 +79,10 @@ const typeDefs = `
         return persons.filter(byPhone)
       },
       // line under may need root added back in front of args
-      findPerson: (args) => persons.find(p => p.name === args.name )
+      findPerson: (root, args) => {
+        console.log('finding person:', args.name)
+        return persons.find(p => p.name === args.name )
+      }
     },
     Person: {
       address: (root) => {
@@ -91,6 +94,7 @@ const typeDefs = `
     },
     Mutation: {
       addPerson: (root, args) => {
+        console.log('trying to create new person: ', args.name)
         if (persons.find(p => p.name === args.name)){
           throw new GraphQLError('Name must be unique', {
             extensions: {
