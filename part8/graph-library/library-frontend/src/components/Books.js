@@ -1,5 +1,3 @@
-import { useQuery } from "@apollo/client"
-import { ALL_BOOKS } from "../services/queries"
 
 const Books = (props) => {
 
