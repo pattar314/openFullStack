@@ -21,3 +21,14 @@ export const ALL_BOOKS = gql`
     }
   }
 `
+
+export const ADD_BOOK = gql`
+  mutaton addBook($title: String!, $author: String!, $published: String, $genres: [String]){
+    addBook(
+            title: $title,
+            author: $author,
+            published: $published,
+            genres: $genres
+            )
+  }
+`
