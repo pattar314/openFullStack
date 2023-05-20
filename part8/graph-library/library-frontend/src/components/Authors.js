@@ -1,5 +1,5 @@
-import { useQuery } from "@apollo/client"
-import { ALL_AUTHORS, ALL_BOOKS } from "../services/queries"
+import { useMutation, useQuery } from "@apollo/client"
+import { ALL_AUTHORS, ALL_BOOKS, EDIT_BORN } from "../services/queries"
 import {  useEffect, useState } from "react"
 
 
@@ -9,9 +9,14 @@ const Authors = (props) => {
 
 
   const [authors, setAuthors] = useState([])
+  const [author, setAuthor] = useState('')
   const [books, setBooks] = useState([])
+  const [born, setBorn] = useState(null)
   const queryData = useQuery(ALL_AUTHORS)
   const bookData = useQuery(ALL_BOOKS)
+  const [editBorn] = useMutation(EDIT_BORN, {
+    refetchQueries: [ALL_AUTHORS, ALL_BOOKS]
+  })
   
 
 
@@ -27,11 +32,11 @@ const Authors = (props) => {
         const authorProcessor = queryData.data.allAuthors.map((a) => {
           return {...a, bookCount: countBooks(a.name)}
         })
-        console.log('authors: ', authorProcessor)
-        setAuthors(authorProcessor)
+        setAuthors(authorProcessor)      
+        setAuthor(authorProcessor[0].name)
       }
-  }
-  , [books, queryData.data, bookData.data])
+
+  }, [books, queryData.data, bookData.data ])
 
 
 
@@ -40,7 +45,12 @@ const Authors = (props) => {
   }
 
 
-
+  const changeBirth = (e) => {
+    e.preventDefault()
+    console.log(`name: ${author}, born: ${born}`)
+    const editData = editBorn({ variables: { name: author, born: Number(born)}})
+    console.log('edit data: ', editData)
+  }
 
   return (
     <div>
@@ -61,6 +71,16 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      <div>set birthyear</div>
+      <form onSubmit={changeBirth}>
+        <select onChange={(e) => setAuthor(e.target.value)}>
+          {authors.map(a => {
+            return <option key={a.name} value={a.name}>{a.name}</option>
+          })}
+        </select>
+        <input placeholder="birth year" onChange={(e) => setBorn(e.target.value)} />
+        <button type='submit'>update author birth year</button>
+      </form>
     </div>
   )
 }
