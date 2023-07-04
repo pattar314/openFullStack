@@ -7,15 +7,22 @@ import {  useEffect, useState } from "react"
 const Authors = (props) => {
 
 
-
   const [authors, setAuthors] = useState([])
   const [author, setAuthor] = useState('')
   const [books, setBooks] = useState([])
   const [born, setBorn] = useState(null)
-  const queryData = useQuery(ALL_AUTHORS)
-  const bookData = useQuery(ALL_BOOKS)
+  const queryData = useQuery(ALL_AUTHORS, {
+    onError: (error) => {
+      console.log('there was an error: ', error)
+    }
+  })
+  const bookData = useQuery(ALL_BOOKS, {
+    onError: (error) => {
+      console.log('there was an error: ', error)
+    }
+  })
   const [editBorn] = useMutation(EDIT_BORN, {
-    refetchQueries: [ALL_AUTHORS, ALL_BOOKS]
+    refetchQueries: [{ query: ALL_AUTHORS}, { query: ALL_BOOKS}]
   })
   
 

@@ -10,20 +10,15 @@ const Persons = ({persons}) => {
 
   const result = useQuery(FIND_PERSON, {
     variables: { nameToSearch },
-    skip: !nameToSearch
+    skip: !nameToSearch,
   })
 
-  console.log('test:', useQuery(FIND_PERSON, {
-    variables: { nameToSearch },
-    skip: !nameToSearch,
-  }))
 
   if(result.data){
     console.log('there is result data:', result.data)
   }
 
   if (nameToSearch && result.data){
-    console.log(`there is name to search ${nameToSearch} and data ${result.data}`)
     return (
       <Person
         person={ result.data.findPerson }
@@ -32,19 +27,26 @@ const Persons = ({persons}) => {
     )
   }
 
+  if(persons === null){
+    return <div>...loading</div>
+  }
+
   return (
     <div>
       <h2>Persons</h2>
-      {persons.map((p) => (
-        <div key={p.name}>
-        {p.name} {p.phone}
-        <button onClick={() => {
-          setNameToSearch(p.name) 
-        }}>
-          show address
-        </button>
-        </div>
-      ))}
+      {  console.log('p: ', persons)}
+      {persons.map((p) => {
+        return (
+          <div key={p.name}>
+          {p.name} {p.phone}
+          <button onClick={() => {
+            setNameToSearch(p.name) 
+          }}>
+            show address
+          </button>
+          </div>
+        )
+      })}
     </div>
   )
 }
