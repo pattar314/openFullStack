@@ -1,0 +1,5 @@
+todo 
+1. set up express and graphql middleware
+2. update schema
+3. set up websockets
+4. add resolvers with pubsub and set up publishing
